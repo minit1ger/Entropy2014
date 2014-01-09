@@ -1,9 +1,13 @@
 #################
+## Binaries
+#################
+PPC603gnu/
+
+#################
 ## Eclipse
 #################
 
 *.pydevproject
-.project
 .metadata
 bin/
 tmp/
