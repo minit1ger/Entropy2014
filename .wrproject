@@ -240,7 +240,7 @@
         </mapAttribute>
     </attributes>
     <buildtargets>
-        <buildtarget buildtool="Linker" name="BuiltinDefaultCode" passed="false" targetname="BuiltinDefaultCode">
+        <buildtarget buildtool="Linker" name="FRC_UserProgram" passed="false" targetname="BuiltinDefaultCode">
             <contents>
                 <buildtargetreference name="/Robot2014/BuiltinDefaultCode_partialImage"/>
             </contents>

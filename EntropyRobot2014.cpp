@@ -3,7 +3,7 @@
 #include "EntropyDrive.h"
 #include "EntropyJoystick.h"
 #include "ExampleSHS.h"
-
+#include "GenericHID.h"
 
 class EntropyRobot2014 : public IterativeRobot
 {
@@ -18,6 +18,8 @@ class EntropyRobot2014 : public IterativeRobot
 	EntropyJoystick *DriveStick;			// EntropyJoystick used for robot driving
 	EntropyJoystick *GameStick;			// EntropyJoystick for all other functions		
 	
+	//Output to Driver Station;
+	DriverStationLCD *ds; 
 	
 	// Declare SHS Subsystems here
 	EntropyDrive MyRobot;		// The Robot Drive instance
@@ -50,6 +52,8 @@ public:
 		m_disabledPeriodicLoops = 0;
 		m_telePeriodicLoops = 0;
 
+		ds = DriverStationLCD::GetInstance();
+		
 		printf("EntropyBot14 Constructor Completed\n");
 	}
 	
@@ -121,8 +125,14 @@ public:
 		// increment the number of teleop periodic loops completed
 		m_telePeriodicLoops++;
 		
-		//Feed joystick inputs to each subsystem here		
-		MyRobot.DriveRobot(DriveStick->GetY(),DriveStick->GetX());
+		//Feed joystick inputs to each subsystem here
+		
+		
+		//Using triggers to turn;
+		ds->Printf(DriverStationLCD::kUser_Line1,0, "GetY: %f",DriveStick->GetY());
+		ds->Printf(DriverStationLCD::kUser_Line2,0, "GetZ: %f",DriveStick->GetZ());
+		MyRobot.DriveRobot(DriveStick->GetY(),(-DriveStick->GetZ()));
+		//original:MyRobot.DriveRobot(DriveStick->GetY(),DriveStick->GetX());
 		//MyRobot.DriveRobotTrig(DriveStick->GetY(),DriveStick->GetX());
 		
 	} // TeleopPeriodic(void)
