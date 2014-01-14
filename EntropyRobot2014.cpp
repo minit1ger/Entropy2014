@@ -5,6 +5,12 @@
 #include "ExampleSHS.h"
 #include "GenericHID.h"
 
+#define HALFSPEED 1
+#define DEADZONE 1
+
+const double HALF_SPEED_COEFF = 0.85;
+const double DEAD_ZONE_MAX = .15;
+
 class EntropyRobot2014 : public IterativeRobot
 {
 	// Declare variable for the robot system
@@ -17,6 +23,7 @@ class EntropyRobot2014 : public IterativeRobot
 	// Declare variables for the two joysticks being used
 	EntropyJoystick *DriveStick;			// EntropyJoystick used for robot driving
 	EntropyJoystick *GameStick;			// EntropyJoystick for all other functions		
+	float m_turnSpeed;
 	
 	//Output to Driver Station;
 	DriverStationLCD *ds; 
@@ -54,6 +61,7 @@ public:
 
 		ds = DriverStationLCD::GetInstance();
 		
+		m_turnSpeed=1.0;
 		printf("EntropyBot14 Constructor Completed\n");
 	}
 	
@@ -126,16 +134,50 @@ public:
 		m_telePeriodicLoops++;
 		
 		//Feed joystick inputs to each subsystem here
+
+#ifdef DEADZONE
 		
+#endif
+		
+#ifdef HALFSPEED
+		if (DriveStick->GetRawButton (1)){
+			
+			m_turnSpeed=HALF_SPEED_COEFF;
+			
+		}
+		
+		else {
+			
+			m_turnSpeed=1;
+		}
+#endif
 		
 		//Using triggers to turn;
-		ds->Printf(DriverStationLCD::kUser_Line1,0, "GetY: %f",DriveStick->GetY());
-		ds->Printf(DriverStationLCD::kUser_Line2,0, "GetZ: %f",DriveStick->GetZ());
-		MyRobot.DriveRobot(DriveStick->GetY(),(-DriveStick->GetZ()));
+		ds->PrintfLine(DriverStationLCD::kUser_Line1, "GetY: %f",DriveStick->GetY());
+		ds->PrintfLine(DriverStationLCD::kUser_Line2, "GetZ: %f",DriveStick->GetZ());
+		ds->UpdateLCD();
+		double ZValue=getYValue(DriveStick);
+		MyRobot.DriveRobot(ZValue,m_turnSpeed*(-DriveStick->GetZ()));
 		//original:MyRobot.DriveRobot(DriveStick->GetY(),DriveStick->GetX());
 		//MyRobot.DriveRobotTrig(DriveStick->GetY(),DriveStick->GetX());
 		
 	} // TeleopPeriodic(void)
+	
+	double getYValue(EntropyJoystick *js){
+		
+		double Value=js->GetY();
+		
+#ifdef DEADZONE
+		
+		if (Value<DEAD_ZONE_MAX){
+			if (Value>-DEAD_ZONE_MAX){
+				Value=0;
+			}
+		}
+	
+#endif
+	return Value;	
+	}
 
 
 	
