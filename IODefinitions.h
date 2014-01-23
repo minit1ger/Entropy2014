@@ -21,7 +21,9 @@ public:
 
     enum {
     	USB_PORT_1 = 1,
-    	USB_PORT_2
+    	USB_PORT_2,
+    	USB_PORT_3
+    	
     	
     } Physical_USB_Port;
     

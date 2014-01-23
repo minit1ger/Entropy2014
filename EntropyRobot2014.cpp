@@ -22,6 +22,7 @@ class EntropyRobot2014 : public IterativeRobot
 	
 	// Declare variables for the two joysticks being used
 	EntropyJoystick *DriveStick;			// EntropyJoystick used for robot driving
+	EntropyJoystick *DriveStick2;		//
 	EntropyJoystick *GameStick;			// EntropyJoystick for all other functions		
 	float m_turnSpeed;
 	
@@ -46,6 +47,7 @@ public:
 
 		// Establish Hardware IO Controllers
 		DriveStick = new EntropyJoystick(IODefinitions::USB_PORT_1);
+		DriveStick2 = new EntropyJoystick (IODefinitions:: USB_PORT_3);
 		GameStick = new EntropyJoystick(IODefinitions::USB_PORT_2);			
 	
 			
@@ -133,35 +135,41 @@ public:
 		// increment the number of teleop periodic loops completed
 		m_telePeriodicLoops++;
 		
-		//Feed joystick inputs to each subsystem here
-
-#ifdef DEADZONE
-		
-#endif
-		
-#ifdef HALFSPEED
-		if (DriveStick->GetRawButton (1)){
-			
-			m_turnSpeed=HALF_SPEED_COEFF;
-			
-		}
-		
-		else {
-			
-			m_turnSpeed=1;
-		}
-#endif
 		
 		//Using triggers to turn;
 		ds->PrintfLine(DriverStationLCD::kUser_Line1, "GetY: %f",DriveStick->GetY());
 		ds->PrintfLine(DriverStationLCD::kUser_Line2, "GetZ: %f",DriveStick->GetZ());
 		ds->UpdateLCD();
-		double ZValue=getYValue(DriveStick);
-		MyRobot.DriveRobot(ZValue,m_turnSpeed*(-DriveStick->GetZ()));
-		//original:MyRobot.DriveRobot(DriveStick->GetY(),DriveStick->GetX());
-		//MyRobot.DriveRobotTrig(DriveStick->GetY(),DriveStick->GetX());
+		double YValue=getYValue(DriveStick);
+		m_turnSpeed=getHalfSpeed();
+
+		//		
+		//      Controller with Z Triggers
+		//
+				MyRobot.DriveRobot(YValue,m_turnSpeed*(-DriveStick->GetZ()));
 		
+
 	} // TeleopPeriodic(void)
+	
+	double getHalfSpeed(){
+		
+		double Speed = 1;
+		
+#ifdef HALFSPEED
+
+		if (DriveStick->GetRawButton (1)){
+			
+			Speed=HALF_SPEED_COEFF;
+			
+		}
+		
+		else {
+			
+			Speed=1;
+		}
+#endif
+	return Speed;	
+	}
 	
 	double getYValue(EntropyJoystick *js){
 		
