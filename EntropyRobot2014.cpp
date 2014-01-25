@@ -127,6 +127,16 @@ public:
 	void AutonomousPeriodic(void) {
 		
 		m_autoPeriodicLoops++;
+		
+		if (m_autoPeriodicLoops <= 35 && m_autoPeriodicLoops >= 0){MyRobot.DriveRobot(0.5,0.0);}
+		
+		else if (m_autoPeriodicLoops <= 200 && m_autoPeriodicLoops >=90 ) {MyRobot.DriveRobot(-0.2,0.5);}
+		
+		else if (m_autoPeriodicLoops <= 295 && m_autoPeriodicLoops >=255 ) {MyRobot.DriveRobot(0.3,-0.2);}
+
+		else if (m_autoPeriodicLoops <= 460 && m_autoPeriodicLoops >=350 ) {MyRobot.DriveRobot(-0.2,0.5);}
+		
+		else {MyRobot.DriveRobot (0,0);}
 
 	}
 
