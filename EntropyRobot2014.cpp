@@ -4,6 +4,7 @@
 #include "EntropyJoystick.h"
 #include "ExampleSHS.h"
 #include "GenericHID.h"
+#include "Math.h"
 
 #define HALFSPEED 1
 #define DEADZONE 1
@@ -37,7 +38,9 @@ class EntropyRobot2014 : public IterativeRobot
 	UINT32 m_autoPeriodicLoops;
 	UINT32 m_disabledPeriodicLoops;
 	UINT32 m_telePeriodicLoops;
-		
+
+	double previousValue;
+	
 public:
 /**
  * Constructor for this "EntropyRobotDrive2014" Class.
@@ -64,6 +67,7 @@ public:
 		ds = DriverStationLCD::GetInstance();
 		
 		m_turnSpeed=1.0;
+		previousValue=0.0;
 		printf("EntropyBot14 Constructor Completed\n");
 	}
 	
@@ -156,8 +160,17 @@ public:
 		//		
 		//      Controller with Z Triggers
 		//
-				MyRobot.DriveRobot(YValue,m_turnSpeed*(-DriveStick->GetZ()));
+				//MyRobot.DriveRobot(YValue,m_turnSpeed*(-DriveStick->GetZ()));
+				//
+				//Controler for Joystick
+				//
+				
+				//MyRobot.DriveRobot (YValue,m_turnSpeed*(DriveStick->GetX()));
+				
+				//X Box Controler with left joystick
+		//MyRobot.DriveRobot (YValue,(DriveStick->GetRawAxis(Joystick::kDefaultXAxis)));
 		
+		MyRobot.DriveRobot (YValue,(DriveStick->GetRawAxis(4)));
 
 	} // TeleopPeriodic(void)
 	
@@ -184,6 +197,26 @@ public:
 	double getYValue(EntropyJoystick *js){
 		
 		double Value=js->GetY();
+	 
+		double dampValue;
+		
+#ifdef DAMPENING
+
+if ((Value > 0 and previousValue < 0) or
+	(Value < 0 and previousValue > 0)){
+	 if ((abs(Value) > .4) and abs(previousValue) > .4){
+		 if (abs(Value)+abs(previousValue) > or = .1){
+			 if (previousValue > Value){
+				 Value=previousValue-0.2;
+				 else{
+					 Value=previousValue+0.2;
+				 }
+			 }
+		 }
+	 }
+}		
+		
+#endif 
 		
 #ifdef DEADZONE
 		
@@ -194,6 +227,7 @@ public:
 		}
 	
 #endif
+		previousValue=Value;
 	return Value;	
 	}
 
