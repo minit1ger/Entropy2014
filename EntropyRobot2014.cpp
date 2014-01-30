@@ -8,6 +8,7 @@
 
 #define HALFSPEED 1
 #define DEADZONE 1
+#define DAMPENING 1
 
 const double HALF_SPEED_COEFF = 0.85;
 const double DEAD_ZONE_MAX = .15;
@@ -151,9 +152,9 @@ public:
 		
 		
 		//Using triggers to turn;
-		ds->PrintfLine(DriverStationLCD::kUser_Line1, "GetY: %f",DriveStick->GetY());
-		ds->PrintfLine(DriverStationLCD::kUser_Line2, "GetZ: %f",DriveStick->GetZ());
-		ds->UpdateLCD();
+		//ds->PrintfLine(DriverStationLCD::kUser_Line1, "GetY: %f",DriveStick->GetY());
+		//ds->PrintfLine(DriverStationLCD::kUser_Line2, "GetZ: %f",DriveStick->GetZ());
+		//ds->UpdateLCD();
 		double YValue=getYValue(DriveStick);
 		m_turnSpeed=getHalfSpeed();
 
@@ -205,12 +206,12 @@ public:
 if ((Value > 0 and previousValue < 0) or
 	(Value < 0 and previousValue > 0)){
 	 if ((abs(Value) > .4) and abs(previousValue) > .4){
-		 if (abs(Value)+abs(previousValue) > or = .1){
+		 if (abs(Value)+abs(previousValue) >= .1){
 			 if (previousValue > Value){
 				 Value=previousValue-0.2;
-				 else{
-					 Value=previousValue+0.2;
-				 }
+			 }
+			 else{
+				 Value=previousValue+0.2;
 			 }
 		 }
 	 }
