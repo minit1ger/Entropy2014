@@ -199,25 +199,8 @@ public:
 		
 		double Value=js->GetY();
 	 
-		double dampValue;
+		double dampValue=0.05;
 		
-#ifdef DAMPENING
-
-if ((Value > 0 and previousValue < 0) or
-	(Value < 0 and previousValue > 0)){
-	 if ((abs(Value) > .4) and abs(previousValue) > .4){
-		 if (abs(Value)+abs(previousValue) >= .1){
-			 if (previousValue > Value){
-				 Value=previousValue-0.2;
-			 }
-			 else{
-				 Value=previousValue+0.2;
-			 }
-		 }
-	 }
-}		
-		
-#endif 
 		
 #ifdef DEADZONE
 		
@@ -227,12 +210,44 @@ if ((Value > 0 and previousValue < 0) or
 			}
 		}
 	
-#endif
+#endif	
+		
+#ifdef DAMPENING
+	 
+		if ((Value - previousValue > -0.1 and Value - previousValue < 0.1) and Value == 0){
+			previousValue = 0;
+			Value = 0;
+		}	 
+		else if(Value > previousValue){
+		
+		Value = previousValue + dampValue;
+	}	 
+	
+	else if (Value < previousValue){
+		Value = previousValue - dampValue;
+	}
+	
+		 //Displaying Dampening information
+		 ds->PrintfLine(DriverStationLCD::kUser_Line1, "Value: %f",Value);
+		 ds->PrintfLine(DriverStationLCD::kUser_Line2, "previousValue: %f",previousValue);
+		 ds->UpdateLCD();		
+		
+#endif 
+		
+
 		previousValue=Value;
-	return Value;	
+	    return Value;	
 	}
 
-
+double getabs(double value){
+	if (value> 0){
+		return value;
+	}
+	else {
+		value = -(value);
+		return value;
+	}
+}
 	
 	
 	
