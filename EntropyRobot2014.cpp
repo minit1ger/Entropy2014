@@ -7,11 +7,9 @@
 #include "Math.h"
 
 #define HALFSPEED 1
-#define DEADZONE 1
 #define DAMPENING 1
 
 const double HALF_SPEED_COEFF = 0.85;
-const double DEAD_ZONE_MAX = .15;
 
 class EntropyRobot2014 : public IterativeRobot
 {
@@ -202,15 +200,7 @@ public:
 		double dampValue=0.05;
 		
 		
-#ifdef DEADZONE
-		
-		if (Value<DEAD_ZONE_MAX){
-			if (Value>-DEAD_ZONE_MAX){
-				Value=0;
-			}
-		}
-	
-#endif	
+
 		
 #ifdef DAMPENING
 	 

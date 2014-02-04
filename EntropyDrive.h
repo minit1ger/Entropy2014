@@ -30,7 +30,9 @@ private:
 	
 	float right_scale(float rotateValue, float moveValue, DriveMode mode);
 	float left_scale(float rotateValue, float moveValue, DriveMode mode);
-			
+	
+	double addDeadZone(double value);
+	
 public:
 	
 	EntropyDrive () { }; 

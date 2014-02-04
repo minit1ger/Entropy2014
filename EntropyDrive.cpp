@@ -5,6 +5,10 @@
 #include "EntropyDriveTable.h"
 #include <math.h>
 
+#define DEADZONE 1
+
+const double DEAD_ZONE_MAX = .15;
+
 
     bool EntropyDrive::Initialize () { 
 		MotorDriveLeft1 = new CANJaguar(IODefinitions::MOTOR_DRIVE_LEFT_1);
@@ -35,6 +39,8 @@
 		
 		MoveValue=Limit(MoveValue);
 		RotateValue=Limit(RotateValue);
+		
+		MoveValue=addDeadZone(MoveValue);
 		
 				
 		LeftMotors = left_scale(RotateValue, MoveValue, Rotate);  //Scale Motor inpputs from drive table
@@ -344,3 +350,16 @@
 			}
 		}
 	}
+	
+	double EntropyDrive::addDeadZone (double Value)
+	{
+#ifdef DEADZONE
+		
+		if (Value<DEAD_ZONE_MAX){
+			if (Value>-DEAD_ZONE_MAX){
+				Value=0;
+			}
+		}
+	
+#endif	
+	return Value;}
