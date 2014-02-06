@@ -6,10 +6,6 @@
 #include "GenericHID.h"
 #include "Math.h"
 
-#define HALFSPEED 1
-#define DAMPENING 1
-
-const double HALF_SPEED_COEFF = 0.85;
 
 class EntropyRobot2014 : public IterativeRobot
 {
@@ -22,7 +18,6 @@ class EntropyRobot2014 : public IterativeRobot
 	
 	// Declare variables for the two joysticks being used
 	EntropyJoystick *DriveStick;			// EntropyJoystick used for robot driving
-	EntropyJoystick *DriveStick2;		//
 	EntropyJoystick *GameStick;			// EntropyJoystick for all other functions		
 	float m_turnSpeed;
 	
@@ -38,7 +33,6 @@ class EntropyRobot2014 : public IterativeRobot
 	UINT32 m_disabledPeriodicLoops;
 	UINT32 m_telePeriodicLoops;
 
-	double previousValue;
 	
 public:
 /**
@@ -49,7 +43,6 @@ public:
 
 		// Establish Hardware IO Controllers
 		DriveStick = new EntropyJoystick(IODefinitions::USB_PORT_1);
-		DriveStick2 = new EntropyJoystick (IODefinitions:: USB_PORT_3);
 		GameStick = new EntropyJoystick(IODefinitions::USB_PORT_2);			
 	
 			
@@ -66,7 +59,6 @@ public:
 		ds = DriverStationLCD::GetInstance();
 		
 		m_turnSpeed=1.0;
-		previousValue=0.0;
 		printf("EntropyBot14 Constructor Completed\n");
 	}
 	
@@ -150,94 +142,20 @@ public:
 		
 		
 		//Using triggers to turn;
-		//ds->PrintfLine(DriverStationLCD::kUser_Line1, "GetY: %f",DriveStick->GetY());
-		//ds->PrintfLine(DriverStationLCD::kUser_Line2, "GetZ: %f",DriveStick->GetZ());
-		//ds->UpdateLCD();
-		double YValue=getYValue(DriveStick);
-		m_turnSpeed=getHalfSpeed();
-
-		//		
-		//      Controller with Z Triggers
-		//
-				//MyRobot.DriveRobot(YValue,m_turnSpeed*(-DriveStick->GetZ()));
-				//
-				//Controler for Joystick
-				//
-				
-				//MyRobot.DriveRobot (YValue,m_turnSpeed*(DriveStick->GetX()));
-				
-				//X Box Controler with left joystick
-		//MyRobot.DriveRobot (YValue,(DriveStick->GetRawAxis(Joystick::kDefaultXAxis)));
 		
-		MyRobot.DriveRobot (YValue,(DriveStick->GetRawAxis(4)));
-
+		//		
+		MyRobot.DriveRobot (DriveStick->GetY(),DriveStick->GetRawAxis(4));
 	} // TeleopPeriodic(void)
 	
-	double getHalfSpeed(){
-		
-		double Speed = 1;
-		
-#ifdef HALFSPEED
-
-		if (DriveStick->GetRawButton (1)){
-			
-			Speed=HALF_SPEED_COEFF;
-			
-		}
-		
-		else {
-			
-			Speed=1;
-		}
-#endif
-	return Speed;	
-	}
 	
-	double getYValue(EntropyJoystick *js){
 		
-		double Value=js->GetY();
-	 
-		double dampValue=0.05;
+
 		
 		
 
 		
-#ifdef DAMPENING
-	 
-		if ((Value - previousValue > -0.1 and Value - previousValue < 0.1) and Value == 0){
-			previousValue = 0;
-			Value = 0;
-		}	 
-		else if(Value > previousValue){
-		
-		Value = previousValue + dampValue;
-	}	 
-	
-	else if (Value < previousValue){
-		Value = previousValue - dampValue;
-	}
-	
-		 //Displaying Dampening information
-		 ds->PrintfLine(DriverStationLCD::kUser_Line1, "Value: %f",Value);
-		 ds->PrintfLine(DriverStationLCD::kUser_Line2, "previousValue: %f",previousValue);
-		 ds->UpdateLCD();		
-		
-#endif 
-		
 
-		previousValue=Value;
-	    return Value;	
-	}
 
-double getabs(double value){
-	if (value> 0){
-		return value;
-	}
-	else {
-		value = -(value);
-		return value;
-	}
-}
 	
 	
 	

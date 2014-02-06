@@ -41,6 +41,8 @@ const double DEAD_ZONE_MAX = .15;
 		RotateValue=Limit(RotateValue);
 		
 		MoveValue=addDeadZone(MoveValue);
+		MoveValue=moveValueDampen(MoveValue);
+		
 		
 				
 		LeftMotors = left_scale(RotateValue, MoveValue, Rotate);  //Scale Motor inpputs from drive table
@@ -363,3 +365,29 @@ const double DEAD_ZONE_MAX = .15;
 	
 #endif	
 	return Value;}
+
+	
+	float EntropyDrive::moveValueDampen (float moveValue)
+	{
+
+		double dampValue=0.05;
+		
+		if ((moveValue - previousValue > -0.1 and moveValue - previousValue < 0.1) and moveValue == 0){
+			previousValue = 0;
+			moveValue = 0;
+		}	 
+		else if(moveValue > previousValue){
+		
+			moveValue = previousValue + dampValue;
+	}	 
+	
+	else if (moveValue < previousValue){
+		moveValue = previousValue - dampValue;
+	}
+	
+		
+		previousValue=moveValue;
+	    return moveValue;	
+		
+	
+	};

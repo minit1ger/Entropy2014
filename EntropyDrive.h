@@ -13,7 +13,8 @@ private:
 		Rotate = 0, 
 		Radius
 	};
-
+	double previousValue;
+	
 	RobotDrive * wpiDrive; 
 	
 	//The robot drive system motors
@@ -32,6 +33,7 @@ private:
 	float left_scale(float rotateValue, float moveValue, DriveMode mode);
 	
 	double addDeadZone(double value);
+	float moveValueDampen (float moveValue);
 	
 public:
 	
