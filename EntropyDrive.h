@@ -47,6 +47,7 @@ public:
 	
 	bool DriveRobot(float MoveValue, float RotateValue);
 	bool DriveRobotTrig(float MoveValue, float RotateValue);
+	bool DriveRobot_new(float MoveValue, float RotateValue);
 	
 };
 

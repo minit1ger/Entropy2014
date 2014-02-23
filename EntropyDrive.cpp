@@ -391,3 +391,72 @@ const double DEAD_ZONE_MAX = .15;
 		
 	
 	};
+	
+	/**
+	 * DriveRobot_new: This is a new and improved method for RobotDrive.
+	 * This addition was added in 2014 and is expected to be on the 2015 robot.
+	 * The older function used multiple functions to change the index in multiple arrays in how to access the look-up table.
+	 * This function upgraded how the index was created and hopefully this function will be more straightforward.
+	 * 
+	 * The look-up table can be found in the SDD.
+	 * 
+	 * Parameters:
+	 *     MoveValue: this float represents the forward and backwards momentum of the robot.
+	 *               It is expected to be bounded between 1 and -1, and we will bound its value to 1 and -1.
+	 *               If MoveValue is between the DEADZONE values, then the robot will turn in place.
+	 *     RotateValue: this float represent the left and right momentum of the robot.
+	 *               It is expected to be bouned between 1 and -1, and we will bound its value to 1 and -1.
+	 */
+	bool EntropyDrive::DriveRobot_new(float MoveValue, float RotateValue){
+
+		const int sizeOfTable=sizeof(left_fast_njxy)/sizeof(left_fast_njxy[0])-1;
+		const float indexIncrement=2/(float)sizeOfTable;
+		const float offset=(sizeOfTable/2)+0.5;
+		
+		float LeftMotors=0;
+		float RightMotors=0;
+		int rx_index=0;
+		int ry_index=0;
+		int lx_index=0;
+		int ly_index=0;
+		
+		float y=addDeadZone(MoveValue);
+		y=moveValueDampen(y);
+		
+		float x=RotateValue;
+
+		//rx_index is the correlating index of the drive table for the x axis.
+		//For x of -1 the x-index is 0, and for x of 1 the x-index is 32.
+		//For y of 1 the y-index is 0, and for y of -1 the y-index is 32.
+		//The y has been inverted because of the polarity flip.
+		rx_index=(int)(x/indexIncrement + offset);
+		ry_index=(int)(-y/indexIncrement + offset);
+		
+		//The left motor is in the opposite direction, so the left values need
+		//to be inverted.
+		lx_index=(int)(-x/indexIncrement + offset);
+		ly_index=(int)(y/indexIncrement + offset);
+	
+		
+		RightMotors=left_fast_njxy[ry_index][rx_index];
+		
+		//turn in place	
+		if(y==0){
+							
+			LeftMotors=RightMotors;
+		}
+
+		else {
+
+			LeftMotors=left_fast_njxy[ly_index][lx_index];
+		}
+		
+		//Left motor is negated because the motors on the robot face different directions.
+		LeftMotors = -LeftMotors; 
+		//Command motors
+	    wpiDrive->SetLeftRightMotorOutputs( LeftMotors, RightMotors );
+		
+		return true;
+	}
+
+
